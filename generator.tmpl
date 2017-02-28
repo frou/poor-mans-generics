@@ -1,0 +1,115 @@
+package set
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// !! This code was automatically generated. Do not hand edit.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import (
+	"github.com/frou/stdext"
+)
+
+type {{.SetTypeName}} map[{{.ElementTypeName}}]stdext.Unit
+
+func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) {{.SetTypeName}} {
+	set := make({{.SetTypeName}})
+	for _, x := range initialElements {
+		set.Add(x)
+	}
+	return set
+}
+
+func (set {{.SetTypeName}}) Add(x {{.ElementTypeName}}) {
+	set[x] = stdext.Extant
+}
+
+func (set {{.SetTypeName}}) Remove(x {{.ElementTypeName}}) {
+	delete(set, x)
+}
+
+func (set {{.SetTypeName}}) Contains(x {{.ElementTypeName}}) bool {
+	_, ok := set[x]
+	return ok
+}
+
+func (set {{.SetTypeName}}) Is(vals ...{{.ElementTypeName}}) bool {
+	if set.Count() != len(vals) {
+		return false
+	}
+	for _, v := range vals {
+		if !set.Contains(v) {
+			return false
+		}
+	}
+	return true
+}
+
+func (set {{.SetTypeName}}) Count() int {
+	return len(set)
+}
+
+func (set {{.SetTypeName}}) Elements() []{{.ElementTypeName}} {
+	elm := make([]{{.ElementTypeName}}, 0, set.Count())
+	for x, _ := range set {
+		elm = append(elm, x)
+	}
+	return elm
+}
+
+func (set {{.SetTypeName}}) Clear() {
+	for x, _ := range set {
+		set.Remove(x)
+	}
+}
+
+func (set {{.SetTypeName}}) Clone() {{.SetTypeName}} {
+	result := New{{.SetTypeName}}()
+	for x, _ := range set {
+		result.Add(x)
+	}
+	return result
+}
+
+// ------------------------------------------------------------
+
+func (a {{.SetTypeName}}) Union(b {{.SetTypeName}}) {{.SetTypeName}} {
+	result := a.Clone()
+	for x, _ := range b {
+		result.Add(x)
+	}
+	return result
+}
+
+func (a {{.SetTypeName}}) Intersection(b {{.SetTypeName}}) {{.SetTypeName}} {
+	result := New{{.SetTypeName}}()
+	for as, _ := range a {
+		for bs, _ := range b {
+			if as == bs {
+				result.Add(as)
+				break
+			}
+		}
+	}
+	return result
+}
+
+func (a {{.SetTypeName}}) Difference(b {{.SetTypeName}}) {{.SetTypeName}} {
+	result := a.Union(b)
+	for as, _ := range a {
+		for bs, _ := range b {
+			if as == bs {
+				result.Remove(as)
+				break
+			}
+		}
+	}
+	return result
+}
+
+// Subtraction is non-commutative: a-b is different to b-a.
+func (a {{.SetTypeName}}) Subtract(b {{.SetTypeName}}) {{.SetTypeName}} {
+	result := a.Clone()
+	for x, _ := range b {
+		result.Remove(x)
+	}
+	return result
+}
