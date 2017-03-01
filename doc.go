@@ -19,3 +19,4 @@ package set
 //go:generate set_type -type complex64
 //go:generate set_type -type complex128
 //go:generate set_type -type string
+//go:generate go fmt
