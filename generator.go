@@ -57,7 +57,7 @@ func run() error {
 	var cfg config
 
 	cfg.ElementTypeName = strings.ToLower(*flagElementTypeName)
-	cfg.SetTypeName = strings.Title(*flagElementTypeName) + "Set"
+	cfg.SetTypeName = strings.Title(*flagElementTypeName) + "s"
 	cfg.TemplatePath = *flagTemplatePath
 	cfg.OutPath = fmt.Sprintf(generatedFileNameFmt, cfg.ElementTypeName)
 
