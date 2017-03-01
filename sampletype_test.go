@@ -1,6 +1,6 @@
 package set
 
-// This assumes a concrete type (StringSet) has been generated.
+// This assumes a concrete type (set.Strings) has already been generated.
 
 import (
 	"testing"

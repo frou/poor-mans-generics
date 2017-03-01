@@ -4,21 +4,21 @@
 // package.
 package set
 
-//go:generate -command set_type go run generator.go
-//go:generate set_type -clean
-//go:generate set_type -type int
-//go:generate set_type -type uint
-//go:generate set_type -type uint8
-//go:generate set_type -type uint16
-//go:generate set_type -type uint32
-//go:generate set_type -type uint64
-//go:generate set_type -type int8
-//go:generate set_type -type int16
-//go:generate set_type -type int32
-//go:generate set_type -type int64
-//go:generate set_type -type float32
-//go:generate set_type -type float64
-//go:generate set_type -type complex64
-//go:generate set_type -type complex128
-//go:generate set_type -type string
+//go:generate -command genset go run generator.go
+//go:generate genset -clean
+//go:generate genset -type int
+//go:generate genset -type uint
+//go:generate genset -type uint8
+//go:generate genset -type uint16
+//go:generate genset -type uint32
+//go:generate genset -type uint64
+//go:generate genset -type int8
+//go:generate genset -type int16
+//go:generate genset -type int32
+//go:generate genset -type int64
+//go:generate genset -type float32
+//go:generate genset -type float64
+//go:generate genset -type complex64
+//go:generate genset -type complex128
+//go:generate genset -type string
 //go:generate go fmt
