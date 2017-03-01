@@ -9,20 +9,20 @@ import (
 )
 
 func TestSet_NewSet_IsNotNil(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	assert.NotNil(t, set)
 }
 
 func TestSet_NewSetWithElements_IsPopulated(t *testing.T) {
-	set := NewStringSet("a", "b")
+	set := NewStrings("a", "b")
 
 	assert.Equal(t, 2, set.Count())
 	assert.True(t, set.Comprises("a", "b"))
 }
 
 func TestSet_AddToEmpty_OneElementSet(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 
@@ -31,7 +31,7 @@ func TestSet_AddToEmpty_OneElementSet(t *testing.T) {
 }
 
 func TestSet_AddMultiple_MultipleElementSet(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 	set.Add("b")
@@ -41,7 +41,7 @@ func TestSet_AddMultiple_MultipleElementSet(t *testing.T) {
 }
 
 func TestSet_AddMultipleWithDuplicates_NoDuplicatesSet(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 	set.Add("b")
@@ -54,7 +54,7 @@ func TestSet_AddMultipleWithDuplicates_NoDuplicatesSet(t *testing.T) {
 }
 
 func TestSet_RemoveExtantElement_ElementIsRemoved(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 	set.Add("b")
@@ -65,7 +65,7 @@ func TestSet_RemoveExtantElement_ElementIsRemoved(t *testing.T) {
 }
 
 func TestSet_RemoveNonexistentElement_NoEffect(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 	set.Add("b")
@@ -76,7 +76,7 @@ func TestSet_RemoveNonexistentElement_NoEffect(t *testing.T) {
 }
 
 func TestSet_ContainsAddedElement_Does(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 
@@ -84,7 +84,7 @@ func TestSet_ContainsAddedElement_Does(t *testing.T) {
 }
 
 func TestSet_ContainsNonAddedElement_DoesNot(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	assert.False(t, set.Contains(""))
 	set.Add("a")
@@ -92,7 +92,7 @@ func TestSet_ContainsNonAddedElement_DoesNot(t *testing.T) {
 }
 
 func TestSet_Comprises_ExactMatch(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	assert.True(t, set.Comprises())
 	set.Add("a")
@@ -103,7 +103,7 @@ func TestSet_Comprises_ExactMatch(t *testing.T) {
 }
 
 func TestSet_Comprises_NonMatch(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 	set.Add("b")
@@ -116,7 +116,7 @@ func TestSet_Comprises_NonMatch(t *testing.T) {
 }
 
 func TestSet_Count_IsAccurate(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	assert.Zero(t, set.Count())
 
@@ -142,7 +142,7 @@ func TestSet_Count_IsAccurate(t *testing.T) {
 }
 
 func TestSet_ElementsSlice_IsWellFormed(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	elements := set.Elements()
 	assert.Zero(t, len(elements))
@@ -159,7 +159,7 @@ func TestSet_ElementsSlice_IsWellFormed(t *testing.T) {
 }
 
 func TestSet_ElementsSlice_DoesNotAliasSet(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 	set.Add("a")
 	set.Add("b")
 	set.Add("c")
@@ -173,7 +173,7 @@ func TestSet_ElementsSlice_DoesNotAliasSet(t *testing.T) {
 }
 
 func TestSet_Clear_IsEmpty(t *testing.T) {
-	set := NewStringSet()
+	set := NewStrings()
 
 	set.Add("a")
 	set.Add("b")
@@ -184,12 +184,12 @@ func TestSet_Clear_IsEmpty(t *testing.T) {
 }
 
 func TestSet_UnionNoneInCommon_ResultIsAll(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("x")
 	r.Add("y")
 	r.Add("z")
@@ -204,12 +204,12 @@ func TestSet_UnionNoneInCommon_ResultIsAll(t *testing.T) {
 }
 
 func TestSet_UnionSomeInCommon_ResultIsAll(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("d")
 	r.Add("b")
 	r.Add("c")
@@ -224,12 +224,12 @@ func TestSet_UnionSomeInCommon_ResultIsAll(t *testing.T) {
 }
 
 func TestSet_UnionAllInCommon_ResultIsAll(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("c")
 	r.Add("a")
 	r.Add("b")
@@ -244,12 +244,12 @@ func TestSet_UnionAllInCommon_ResultIsAll(t *testing.T) {
 }
 
 func TestSet_IntersectionNoneInCommon_ResultIsNone(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("x")
 	r.Add("y")
 	r.Add("z")
@@ -264,12 +264,12 @@ func TestSet_IntersectionNoneInCommon_ResultIsNone(t *testing.T) {
 }
 
 func TestSet_IntersectionSomeInCommon_ResultIsCommon(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("b")
 	r.Add("c")
 	r.Add("d")
@@ -284,12 +284,12 @@ func TestSet_IntersectionSomeInCommon_ResultIsCommon(t *testing.T) {
 }
 
 func TestSet_IntersectionAllInCommon_ResultIsAll(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("c")
 	r.Add("a")
 	r.Add("b")
@@ -304,12 +304,12 @@ func TestSet_IntersectionAllInCommon_ResultIsAll(t *testing.T) {
 }
 
 func TestSet_DifferenceAllInCommon_ResultIsNone(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("a")
 	r.Add("c")
 	r.Add("b")
@@ -324,12 +324,12 @@ func TestSet_DifferenceAllInCommon_ResultIsNone(t *testing.T) {
 }
 
 func TestSet_DifferenceSomeInCommon_ResultIsNonCommon(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("b")
 	r.Add("c")
 	r.Add("d")
@@ -344,12 +344,12 @@ func TestSet_DifferenceSomeInCommon_ResultIsNonCommon(t *testing.T) {
 }
 
 func TestSet_DifferenceNoneInCommon_ResultIsAll(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("x")
 	r.Add("y")
 	r.Add("z")
@@ -364,12 +364,12 @@ func TestSet_DifferenceNoneInCommon_ResultIsAll(t *testing.T) {
 }
 
 func TestSet_SubtractAllInCommon_ResultIsNone(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("a")
 	r.Add("b")
 	r.Add("c")
@@ -384,12 +384,12 @@ func TestSet_SubtractAllInCommon_ResultIsNone(t *testing.T) {
 }
 
 func TestSet_SubtractSomeInCommon_ResultMissingCommon(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("b")
 	r.Add("c")
 	r.Add("d")
@@ -404,12 +404,12 @@ func TestSet_SubtractSomeInCommon_ResultMissingCommon(t *testing.T) {
 }
 
 func TestSet_SubtractNoneInCommon_NoEffect(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("x")
 	r.Add("y")
 	r.Add("z")
@@ -424,12 +424,12 @@ func TestSet_SubtractNoneInCommon_NoEffect(t *testing.T) {
 }
 
 func TestSet_Subtract_Noncommutative(t *testing.T) {
-	l := NewStringSet()
+	l := NewStrings()
 	l.Add("a")
 	l.Add("b")
 	l.Add("c")
 
-	r := NewStringSet()
+	r := NewStrings()
 	r.Add("b")
 	r.Add("c")
 	r.Add("d")
