@@ -8,20 +8,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSet_New_SetIsNotNil(t *testing.T) {
+func TestSet_NewSet_IsNotNil(t *testing.T) {
 	set := NewStringSet()
 
 	assert.NotNil(t, set)
 }
 
-func TestSet_NewWithElements_SetIsPopulated(t *testing.T) {
+func TestSet_NewSetWithElements_IsPopulated(t *testing.T) {
 	set := NewStringSet("a", "b")
 
 	assert.Equal(t, 2, set.Count())
 	assert.True(t, set.Comprises("a", "b"))
 }
 
-func TestSet_AddToEmpty_SetIsOneElement(t *testing.T) {
+func TestSet_AddToEmpty_OneElementSet(t *testing.T) {
 	set := NewStringSet()
 
 	set.Add("a")
@@ -30,7 +30,7 @@ func TestSet_AddToEmpty_SetIsOneElement(t *testing.T) {
 	assert.True(t, set.Comprises("a"))
 }
 
-func TestSet_AddToNonEmpty_SetIsOneMoreElement(t *testing.T) {
+func TestSet_AddMultiple_MultipleElementSet(t *testing.T) {
 	set := NewStringSet()
 
 	set.Add("a")
@@ -38,6 +38,19 @@ func TestSet_AddToNonEmpty_SetIsOneMoreElement(t *testing.T) {
 
 	assert.Equal(t, 2, set.Count())
 	assert.True(t, set.Comprises("a", "b"))
+}
+
+func TestSet_AddMultipleWithDuplicates_NoDuplicatesSet(t *testing.T) {
+	set := NewStringSet()
+
+	set.Add("a")
+	set.Add("b")
+	set.Add("c")
+	set.Add("a")
+	set.Add("b")
+
+	assert.Equal(t, 3, set.Count())
+	assert.True(t, set.Comprises("a", "b", "c"))
 }
 
 func TestSet_RemoveExtantElement_ElementIsRemoved(t *testing.T) {
@@ -78,7 +91,7 @@ func TestSet_ContainsNonAddedElement_DoesNot(t *testing.T) {
 	assert.False(t, set.Contains("b"))
 }
 
-func TestSet_ComprisesExactMatch_Does(t *testing.T) {
+func TestSet_Comprises_ExactMatch(t *testing.T) {
 	set := NewStringSet()
 
 	assert.True(t, set.Comprises())
@@ -89,7 +102,7 @@ func TestSet_ComprisesExactMatch_Does(t *testing.T) {
 	assert.True(t, set.Comprises("a", "b", "c"))
 }
 
-func TestSet_ComprisesInexactMatch_DoesNot(t *testing.T) {
+func TestSet_Comprises_NonMatch(t *testing.T) {
 	set := NewStringSet()
 
 	set.Add("a")
@@ -159,7 +172,7 @@ func TestSet_ElementsSlice_DoesNotAliasSet(t *testing.T) {
 	assert.True(t, set.Comprises("a", "b", "c"))
 }
 
-func TestSet_Clear_SetIsEmpty(t *testing.T) {
+func TestSet_Clear_IsEmpty(t *testing.T) {
 	set := NewStringSet()
 
 	set.Add("a")
