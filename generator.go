@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -15,6 +16,7 @@ import (
 var (
 	flagElementTypeName = flag.String("type", "", "element type name")
 	flagTemplatePath    = flag.String("template", "generator.tmpl", "path to template")
+	flagClean           = flag.Bool("clean", false, "instead of generating, delete existing generated files")
 )
 
 type config struct {
@@ -32,7 +34,22 @@ func main() {
 	}
 }
 
+const generatedFileNameFmt = "set_%v.go"
+
 func run() error {
+	if *flagClean {
+		names, err := filepath.Glob(fmt.Sprintf(generatedFileNameFmt, "*"))
+		if err != nil {
+			return err
+		}
+		for _, n := range names {
+			if err := os.Remove(n); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
 	if strings.TrimSpace(*flagElementTypeName) == "" {
 		return errors.New("specify an element type name")
 	}
@@ -42,7 +59,7 @@ func run() error {
 	cfg.ElementTypeName = strings.ToLower(*flagElementTypeName)
 	cfg.SetTypeName = strings.Title(*flagElementTypeName) + "Set"
 	cfg.TemplatePath = *flagTemplatePath
-	cfg.OutPath = fmt.Sprintf("set_%v.go", cfg.ElementTypeName)
+	cfg.OutPath = fmt.Sprintf(generatedFileNameFmt, cfg.ElementTypeName)
 
 	tmpl, err := template.ParseFiles(cfg.TemplatePath)
 	if err != nil {
