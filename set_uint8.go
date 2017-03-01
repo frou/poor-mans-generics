@@ -8,30 +8,30 @@ import (
 	"github.com/frou/stdext"
 )
 
-type Uint8Set map[uint8]stdext.Unit
+type Uint8s map[uint8]stdext.Unit
 
-func NewUint8Set(initialElements ...uint8) Uint8Set {
-	set := make(Uint8Set)
+func NewUint8s(initialElements ...uint8) Uint8s {
+	set := make(Uint8s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Uint8Set) Add(x uint8) {
+func (set Uint8s) Add(x uint8) {
 	set[x] = stdext.Extant
 }
 
-func (set Uint8Set) Remove(x uint8) {
+func (set Uint8s) Remove(x uint8) {
 	delete(set, x)
 }
 
-func (set Uint8Set) Contains(x uint8) bool {
+func (set Uint8s) Contains(x uint8) bool {
 	_, ok := set[x]
 	return ok
 }
 
-func (set Uint8Set) Comprises(vals ...uint8) bool {
+func (set Uint8s) Comprises(vals ...uint8) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -43,11 +43,11 @@ func (set Uint8Set) Comprises(vals ...uint8) bool {
 	return true
 }
 
-func (set Uint8Set) Count() int {
+func (set Uint8s) Count() int {
 	return len(set)
 }
 
-func (set Uint8Set) Elements() []uint8 {
+func (set Uint8s) Elements() []uint8 {
 	elm := make([]uint8, 0, set.Count())
 	for x, _ := range set {
 		elm = append(elm, x)
@@ -55,14 +55,14 @@ func (set Uint8Set) Elements() []uint8 {
 	return elm
 }
 
-func (set Uint8Set) Clear() {
+func (set Uint8s) Clear() {
 	for x, _ := range set {
 		set.Remove(x)
 	}
 }
 
-func (set Uint8Set) Clone() Uint8Set {
-	result := NewUint8Set()
+func (set Uint8s) Clone() Uint8s {
+	result := NewUint8s()
 	for x, _ := range set {
 		result.Add(x)
 	}
@@ -71,7 +71,7 @@ func (set Uint8Set) Clone() Uint8Set {
 
 // ------------------------------------------------------------
 
-func (a Uint8Set) Union(b Uint8Set) Uint8Set {
+func (a Uint8s) Union(b Uint8s) Uint8s {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Add(x)
@@ -79,8 +79,8 @@ func (a Uint8Set) Union(b Uint8Set) Uint8Set {
 	return result
 }
 
-func (a Uint8Set) Intersection(b Uint8Set) Uint8Set {
-	result := NewUint8Set()
+func (a Uint8s) Intersection(b Uint8s) Uint8s {
+	result := NewUint8s()
 	for as, _ := range a {
 		for bs, _ := range b {
 			if as == bs {
@@ -92,7 +92,7 @@ func (a Uint8Set) Intersection(b Uint8Set) Uint8Set {
 	return result
 }
 
-func (a Uint8Set) Difference(b Uint8Set) Uint8Set {
+func (a Uint8s) Difference(b Uint8s) Uint8s {
 	result := a.Union(b)
 	for as, _ := range a {
 		for bs, _ := range b {
@@ -106,7 +106,7 @@ func (a Uint8Set) Difference(b Uint8Set) Uint8Set {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Uint8Set) Subtract(b Uint8Set) Uint8Set {
+func (a Uint8s) Subtract(b Uint8s) Uint8s {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Remove(x)

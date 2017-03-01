@@ -8,30 +8,30 @@ import (
 	"github.com/frou/stdext"
 )
 
-type Complex128s map[complex128]stdext.Unit
+type Uints map[uint]stdext.Unit
 
-func NewComplex128s(initialElements ...complex128) Complex128s {
-	set := make(Complex128s)
+func NewUints(initialElements ...uint) Uints {
+	set := make(Uints)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Complex128s) Add(x complex128) {
+func (set Uints) Add(x uint) {
 	set[x] = stdext.Extant
 }
 
-func (set Complex128s) Remove(x complex128) {
+func (set Uints) Remove(x uint) {
 	delete(set, x)
 }
 
-func (set Complex128s) Contains(x complex128) bool {
+func (set Uints) Contains(x uint) bool {
 	_, ok := set[x]
 	return ok
 }
 
-func (set Complex128s) Comprises(vals ...complex128) bool {
+func (set Uints) Comprises(vals ...uint) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -43,26 +43,26 @@ func (set Complex128s) Comprises(vals ...complex128) bool {
 	return true
 }
 
-func (set Complex128s) Count() int {
+func (set Uints) Count() int {
 	return len(set)
 }
 
-func (set Complex128s) Elements() []complex128 {
-	elm := make([]complex128, 0, set.Count())
+func (set Uints) Elements() []uint {
+	elm := make([]uint, 0, set.Count())
 	for x, _ := range set {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
-func (set Complex128s) Clear() {
+func (set Uints) Clear() {
 	for x, _ := range set {
 		set.Remove(x)
 	}
 }
 
-func (set Complex128s) Clone() Complex128s {
-	result := NewComplex128s()
+func (set Uints) Clone() Uints {
+	result := NewUints()
 	for x, _ := range set {
 		result.Add(x)
 	}
@@ -71,7 +71,7 @@ func (set Complex128s) Clone() Complex128s {
 
 // ------------------------------------------------------------
 
-func (a Complex128s) Union(b Complex128s) Complex128s {
+func (a Uints) Union(b Uints) Uints {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Add(x)
@@ -79,8 +79,8 @@ func (a Complex128s) Union(b Complex128s) Complex128s {
 	return result
 }
 
-func (a Complex128s) Intersection(b Complex128s) Complex128s {
-	result := NewComplex128s()
+func (a Uints) Intersection(b Uints) Uints {
+	result := NewUints()
 	for as, _ := range a {
 		for bs, _ := range b {
 			if as == bs {
@@ -92,7 +92,7 @@ func (a Complex128s) Intersection(b Complex128s) Complex128s {
 	return result
 }
 
-func (a Complex128s) Difference(b Complex128s) Complex128s {
+func (a Uints) Difference(b Uints) Uints {
 	result := a.Union(b)
 	for as, _ := range a {
 		for bs, _ := range b {
@@ -106,7 +106,7 @@ func (a Complex128s) Difference(b Complex128s) Complex128s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Complex128s) Subtract(b Complex128s) Complex128s {
+func (a Uints) Subtract(b Uints) Uints {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Remove(x)

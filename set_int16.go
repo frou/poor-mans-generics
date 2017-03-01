@@ -8,30 +8,30 @@ import (
 	"github.com/frou/stdext"
 )
 
-type Int16Set map[int16]stdext.Unit
+type Int16s map[int16]stdext.Unit
 
-func NewInt16Set(initialElements ...int16) Int16Set {
-	set := make(Int16Set)
+func NewInt16s(initialElements ...int16) Int16s {
+	set := make(Int16s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Int16Set) Add(x int16) {
+func (set Int16s) Add(x int16) {
 	set[x] = stdext.Extant
 }
 
-func (set Int16Set) Remove(x int16) {
+func (set Int16s) Remove(x int16) {
 	delete(set, x)
 }
 
-func (set Int16Set) Contains(x int16) bool {
+func (set Int16s) Contains(x int16) bool {
 	_, ok := set[x]
 	return ok
 }
 
-func (set Int16Set) Comprises(vals ...int16) bool {
+func (set Int16s) Comprises(vals ...int16) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -43,11 +43,11 @@ func (set Int16Set) Comprises(vals ...int16) bool {
 	return true
 }
 
-func (set Int16Set) Count() int {
+func (set Int16s) Count() int {
 	return len(set)
 }
 
-func (set Int16Set) Elements() []int16 {
+func (set Int16s) Elements() []int16 {
 	elm := make([]int16, 0, set.Count())
 	for x, _ := range set {
 		elm = append(elm, x)
@@ -55,14 +55,14 @@ func (set Int16Set) Elements() []int16 {
 	return elm
 }
 
-func (set Int16Set) Clear() {
+func (set Int16s) Clear() {
 	for x, _ := range set {
 		set.Remove(x)
 	}
 }
 
-func (set Int16Set) Clone() Int16Set {
-	result := NewInt16Set()
+func (set Int16s) Clone() Int16s {
+	result := NewInt16s()
 	for x, _ := range set {
 		result.Add(x)
 	}
@@ -71,7 +71,7 @@ func (set Int16Set) Clone() Int16Set {
 
 // ------------------------------------------------------------
 
-func (a Int16Set) Union(b Int16Set) Int16Set {
+func (a Int16s) Union(b Int16s) Int16s {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Add(x)
@@ -79,8 +79,8 @@ func (a Int16Set) Union(b Int16Set) Int16Set {
 	return result
 }
 
-func (a Int16Set) Intersection(b Int16Set) Int16Set {
-	result := NewInt16Set()
+func (a Int16s) Intersection(b Int16s) Int16s {
+	result := NewInt16s()
 	for as, _ := range a {
 		for bs, _ := range b {
 			if as == bs {
@@ -92,7 +92,7 @@ func (a Int16Set) Intersection(b Int16Set) Int16Set {
 	return result
 }
 
-func (a Int16Set) Difference(b Int16Set) Int16Set {
+func (a Int16s) Difference(b Int16s) Int16s {
 	result := a.Union(b)
 	for as, _ := range a {
 		for bs, _ := range b {
@@ -106,7 +106,7 @@ func (a Int16Set) Difference(b Int16Set) Int16Set {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Int16Set) Subtract(b Int16Set) Int16Set {
+func (a Int16s) Subtract(b Int16s) Int16s {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Remove(x)

@@ -8,30 +8,30 @@ import (
 	"github.com/frou/stdext"
 )
 
-type StringSet map[string]stdext.Unit
+type Strings map[string]stdext.Unit
 
-func NewStringSet(initialElements ...string) StringSet {
-	set := make(StringSet)
+func NewStrings(initialElements ...string) Strings {
+	set := make(Strings)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set StringSet) Add(x string) {
+func (set Strings) Add(x string) {
 	set[x] = stdext.Extant
 }
 
-func (set StringSet) Remove(x string) {
+func (set Strings) Remove(x string) {
 	delete(set, x)
 }
 
-func (set StringSet) Contains(x string) bool {
+func (set Strings) Contains(x string) bool {
 	_, ok := set[x]
 	return ok
 }
 
-func (set StringSet) Comprises(vals ...string) bool {
+func (set Strings) Comprises(vals ...string) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -43,11 +43,11 @@ func (set StringSet) Comprises(vals ...string) bool {
 	return true
 }
 
-func (set StringSet) Count() int {
+func (set Strings) Count() int {
 	return len(set)
 }
 
-func (set StringSet) Elements() []string {
+func (set Strings) Elements() []string {
 	elm := make([]string, 0, set.Count())
 	for x, _ := range set {
 		elm = append(elm, x)
@@ -55,14 +55,14 @@ func (set StringSet) Elements() []string {
 	return elm
 }
 
-func (set StringSet) Clear() {
+func (set Strings) Clear() {
 	for x, _ := range set {
 		set.Remove(x)
 	}
 }
 
-func (set StringSet) Clone() StringSet {
-	result := NewStringSet()
+func (set Strings) Clone() Strings {
+	result := NewStrings()
 	for x, _ := range set {
 		result.Add(x)
 	}
@@ -71,7 +71,7 @@ func (set StringSet) Clone() StringSet {
 
 // ------------------------------------------------------------
 
-func (a StringSet) Union(b StringSet) StringSet {
+func (a Strings) Union(b Strings) Strings {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Add(x)
@@ -79,8 +79,8 @@ func (a StringSet) Union(b StringSet) StringSet {
 	return result
 }
 
-func (a StringSet) Intersection(b StringSet) StringSet {
-	result := NewStringSet()
+func (a Strings) Intersection(b Strings) Strings {
+	result := NewStrings()
 	for as, _ := range a {
 		for bs, _ := range b {
 			if as == bs {
@@ -92,7 +92,7 @@ func (a StringSet) Intersection(b StringSet) StringSet {
 	return result
 }
 
-func (a StringSet) Difference(b StringSet) StringSet {
+func (a Strings) Difference(b Strings) Strings {
 	result := a.Union(b)
 	for as, _ := range a {
 		for bs, _ := range b {
@@ -106,7 +106,7 @@ func (a StringSet) Difference(b StringSet) StringSet {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a StringSet) Subtract(b StringSet) StringSet {
+func (a Strings) Subtract(b Strings) Strings {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Remove(x)

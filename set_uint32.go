@@ -8,30 +8,30 @@ import (
 	"github.com/frou/stdext"
 )
 
-type Uint32Set map[uint32]stdext.Unit
+type Uint32s map[uint32]stdext.Unit
 
-func NewUint32Set(initialElements ...uint32) Uint32Set {
-	set := make(Uint32Set)
+func NewUint32s(initialElements ...uint32) Uint32s {
+	set := make(Uint32s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Uint32Set) Add(x uint32) {
+func (set Uint32s) Add(x uint32) {
 	set[x] = stdext.Extant
 }
 
-func (set Uint32Set) Remove(x uint32) {
+func (set Uint32s) Remove(x uint32) {
 	delete(set, x)
 }
 
-func (set Uint32Set) Contains(x uint32) bool {
+func (set Uint32s) Contains(x uint32) bool {
 	_, ok := set[x]
 	return ok
 }
 
-func (set Uint32Set) Comprises(vals ...uint32) bool {
+func (set Uint32s) Comprises(vals ...uint32) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -43,11 +43,11 @@ func (set Uint32Set) Comprises(vals ...uint32) bool {
 	return true
 }
 
-func (set Uint32Set) Count() int {
+func (set Uint32s) Count() int {
 	return len(set)
 }
 
-func (set Uint32Set) Elements() []uint32 {
+func (set Uint32s) Elements() []uint32 {
 	elm := make([]uint32, 0, set.Count())
 	for x, _ := range set {
 		elm = append(elm, x)
@@ -55,14 +55,14 @@ func (set Uint32Set) Elements() []uint32 {
 	return elm
 }
 
-func (set Uint32Set) Clear() {
+func (set Uint32s) Clear() {
 	for x, _ := range set {
 		set.Remove(x)
 	}
 }
 
-func (set Uint32Set) Clone() Uint32Set {
-	result := NewUint32Set()
+func (set Uint32s) Clone() Uint32s {
+	result := NewUint32s()
 	for x, _ := range set {
 		result.Add(x)
 	}
@@ -71,7 +71,7 @@ func (set Uint32Set) Clone() Uint32Set {
 
 // ------------------------------------------------------------
 
-func (a Uint32Set) Union(b Uint32Set) Uint32Set {
+func (a Uint32s) Union(b Uint32s) Uint32s {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Add(x)
@@ -79,8 +79,8 @@ func (a Uint32Set) Union(b Uint32Set) Uint32Set {
 	return result
 }
 
-func (a Uint32Set) Intersection(b Uint32Set) Uint32Set {
-	result := NewUint32Set()
+func (a Uint32s) Intersection(b Uint32s) Uint32s {
+	result := NewUint32s()
 	for as, _ := range a {
 		for bs, _ := range b {
 			if as == bs {
@@ -92,7 +92,7 @@ func (a Uint32Set) Intersection(b Uint32Set) Uint32Set {
 	return result
 }
 
-func (a Uint32Set) Difference(b Uint32Set) Uint32Set {
+func (a Uint32s) Difference(b Uint32s) Uint32s {
 	result := a.Union(b)
 	for as, _ := range a {
 		for bs, _ := range b {
@@ -106,7 +106,7 @@ func (a Uint32Set) Difference(b Uint32Set) Uint32Set {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Uint32Set) Subtract(b Uint32Set) Uint32Set {
+func (a Uint32s) Subtract(b Uint32s) Uint32s {
 	result := a.Clone()
 	for x, _ := range b {
 		result.Remove(x)
