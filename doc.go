@@ -6,6 +6,8 @@ package set
 
 //go:generate -command set_type go run generator.go
 //go:generate set_type -clean
+//go:generate set_type -type int
+//go:generate set_type -type uint
 //go:generate set_type -type uint8
 //go:generate set_type -type uint16
 //go:generate set_type -type uint32
