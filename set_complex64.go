@@ -31,7 +31,7 @@ func (set Complex64Set) Contains(x complex64) bool {
 	return ok
 }
 
-func (set Complex64Set) Is(vals ...complex64) bool {
+func (set Complex64Set) Comprises(vals ...complex64) bool {
 	if set.Count() != len(vals) {
 		return false
 	}

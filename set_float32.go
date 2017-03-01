@@ -31,7 +31,7 @@ func (set Float32Set) Contains(x float32) bool {
 	return ok
 }
 
-func (set Float32Set) Is(vals ...float32) bool {
+func (set Float32Set) Comprises(vals ...float32) bool {
 	if set.Count() != len(vals) {
 		return false
 	}

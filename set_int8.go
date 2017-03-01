@@ -31,7 +31,7 @@ func (set Int8Set) Contains(x int8) bool {
 	return ok
 }
 
-func (set Int8Set) Is(vals ...int8) bool {
+func (set Int8Set) Comprises(vals ...int8) bool {
 	if set.Count() != len(vals) {
 		return false
 	}

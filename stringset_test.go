@@ -18,7 +18,7 @@ func TestSet_NewWithElements_SetIsPopulated(t *testing.T) {
 	set := NewStringSet("a", "b")
 
 	assert.Equal(t, 2, set.Count())
-	assert.True(t, set.Is("a", "b"))
+	assert.True(t, set.Comprises("a", "b"))
 }
 
 func TestSet_AddToEmpty_SetIsOneElement(t *testing.T) {
@@ -27,7 +27,7 @@ func TestSet_AddToEmpty_SetIsOneElement(t *testing.T) {
 	set.Add("a")
 
 	assert.Equal(t, 1, set.Count())
-	assert.True(t, set.Is("a"))
+	assert.True(t, set.Comprises("a"))
 }
 
 func TestSet_AddToNonEmpty_SetIsOneMoreElement(t *testing.T) {
@@ -37,7 +37,7 @@ func TestSet_AddToNonEmpty_SetIsOneMoreElement(t *testing.T) {
 	set.Add("b")
 
 	assert.Equal(t, 2, set.Count())
-	assert.True(t, set.Is("a", "b"))
+	assert.True(t, set.Comprises("a", "b"))
 }
 
 func TestSet_RemoveExtantElement_ElementIsRemoved(t *testing.T) {
@@ -81,12 +81,12 @@ func TestSet_ContainsNonAddedElement_DoesNot(t *testing.T) {
 func TestSet_ComprisesExactMatch_Does(t *testing.T) {
 	set := NewStringSet()
 
-	assert.True(t, set.Is())
+	assert.True(t, set.Comprises())
 	set.Add("a")
-	assert.True(t, set.Is("a"))
+	assert.True(t, set.Comprises("a"))
 	set.Add("b")
 	set.Add("c")
-	assert.True(t, set.Is("a", "b", "c"))
+	assert.True(t, set.Comprises("a", "b", "c"))
 }
 
 func TestSet_ComprisesInexactMatch_DoesNot(t *testing.T) {
@@ -96,10 +96,10 @@ func TestSet_ComprisesInexactMatch_DoesNot(t *testing.T) {
 	set.Add("b")
 	set.Add("c")
 
-	assert.False(t, set.Is())
-	assert.False(t, set.Is("a", "b"))
-	assert.False(t, set.Is("a", "b", "x"))
-	assert.False(t, set.Is("x", "b", "c"))
+	assert.False(t, set.Comprises())
+	assert.False(t, set.Comprises("a", "b"))
+	assert.False(t, set.Comprises("a", "b", "x"))
+	assert.False(t, set.Comprises("x", "b", "c"))
 }
 
 func TestSet_Count_IsAccurate(t *testing.T) {
@@ -156,7 +156,7 @@ func TestSet_ElementsSlice_DoesNotAliasSet(t *testing.T) {
 	elements[1] = "x"
 	elements[2] = "x"
 
-	assert.True(t, set.Is("a", "b", "c"))
+	assert.True(t, set.Comprises("a", "b", "c"))
 }
 
 func TestSet_Clear_SetIsEmpty(t *testing.T) {
@@ -183,11 +183,11 @@ func TestSet_UnionNoneInCommon_ResultIsAll(t *testing.T) {
 
 	union := l.Union(r)
 	assert.Equal(t, 6, union.Count())
-	assert.True(t, union.Is("a", "b", "c", "x", "y", "z"))
+	assert.True(t, union.Comprises("a", "b", "c", "x", "y", "z"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("x", "y", "z"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("x", "y", "z"))
 }
 
 func TestSet_UnionSomeInCommon_ResultIsAll(t *testing.T) {
@@ -203,11 +203,11 @@ func TestSet_UnionSomeInCommon_ResultIsAll(t *testing.T) {
 
 	union := l.Union(r)
 	assert.Equal(t, 4, union.Count())
-	assert.True(t, union.Is("a", "b", "c", "d"))
+	assert.True(t, union.Comprises("a", "b", "c", "d"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("b", "c", "d"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("b", "c", "d"))
 }
 
 func TestSet_UnionAllInCommon_ResultIsAll(t *testing.T) {
@@ -223,11 +223,11 @@ func TestSet_UnionAllInCommon_ResultIsAll(t *testing.T) {
 
 	union := l.Union(r)
 	assert.Equal(t, 3, union.Count())
-	assert.True(t, union.Is("a", "b", "c"))
+	assert.True(t, union.Comprises("a", "b", "c"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("a", "b", "c"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("a", "b", "c"))
 }
 
 func TestSet_IntersectionNoneInCommon_ResultIsNone(t *testing.T) {
@@ -243,11 +243,11 @@ func TestSet_IntersectionNoneInCommon_ResultIsNone(t *testing.T) {
 
 	intersection := l.Intersection(r)
 	assert.Equal(t, 0, intersection.Count())
-	assert.True(t, intersection.Is())
+	assert.True(t, intersection.Comprises())
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("x", "y", "z"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("x", "y", "z"))
 }
 
 func TestSet_IntersectionSomeInCommon_ResultIsCommon(t *testing.T) {
@@ -263,11 +263,11 @@ func TestSet_IntersectionSomeInCommon_ResultIsCommon(t *testing.T) {
 
 	intersection := l.Intersection(r)
 	assert.Equal(t, 2, intersection.Count())
-	assert.True(t, intersection.Is("b", "c"))
+	assert.True(t, intersection.Comprises("b", "c"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("b", "c", "d"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("b", "c", "d"))
 }
 
 func TestSet_IntersectionAllInCommon_ResultIsAll(t *testing.T) {
@@ -283,11 +283,11 @@ func TestSet_IntersectionAllInCommon_ResultIsAll(t *testing.T) {
 
 	intersection := l.Intersection(r)
 	assert.Equal(t, 3, intersection.Count())
-	assert.True(t, intersection.Is("b", "c", "a"))
+	assert.True(t, intersection.Comprises("b", "c", "a"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("c", "a", "b"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("c", "a", "b"))
 }
 
 func TestSet_DifferenceAllInCommon_ResultIsNone(t *testing.T) {
@@ -303,11 +303,11 @@ func TestSet_DifferenceAllInCommon_ResultIsNone(t *testing.T) {
 
 	diff := l.Difference(r)
 	assert.Equal(t, 0, diff.Count())
-	assert.True(t, diff.Is())
+	assert.True(t, diff.Comprises())
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("b", "a", "c"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("b", "a", "c"))
 }
 
 func TestSet_DifferenceSomeInCommon_ResultIsNonCommon(t *testing.T) {
@@ -323,11 +323,11 @@ func TestSet_DifferenceSomeInCommon_ResultIsNonCommon(t *testing.T) {
 
 	diff := l.Difference(r)
 	assert.Equal(t, 2, diff.Count())
-	assert.True(t, diff.Is("a", "d"))
+	assert.True(t, diff.Comprises("a", "d"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("b", "c", "d"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("b", "c", "d"))
 }
 
 func TestSet_DifferenceNoneInCommon_ResultIsAll(t *testing.T) {
@@ -343,11 +343,11 @@ func TestSet_DifferenceNoneInCommon_ResultIsAll(t *testing.T) {
 
 	diff := l.Difference(r)
 	assert.Equal(t, 6, diff.Count())
-	assert.True(t, diff.Is("a", "b", "c", "x", "y", "z"))
+	assert.True(t, diff.Comprises("a", "b", "c", "x", "y", "z"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("z", "y", "x"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("z", "y", "x"))
 }
 
 func TestSet_SubtractAllInCommon_ResultIsNone(t *testing.T) {
@@ -363,11 +363,11 @@ func TestSet_SubtractAllInCommon_ResultIsNone(t *testing.T) {
 
 	leftSubRight := l.Subtract(r)
 	assert.Equal(t, 0, leftSubRight.Count())
-	assert.True(t, leftSubRight.Is())
+	assert.True(t, leftSubRight.Comprises())
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("a", "b", "c"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("a", "b", "c"))
 }
 
 func TestSet_SubtractSomeInCommon_ResultMissingCommon(t *testing.T) {
@@ -383,11 +383,11 @@ func TestSet_SubtractSomeInCommon_ResultMissingCommon(t *testing.T) {
 
 	leftSubRight := l.Subtract(r)
 	assert.Equal(t, 1, leftSubRight.Count())
-	assert.True(t, leftSubRight.Is("a"))
+	assert.True(t, leftSubRight.Comprises("a"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("b", "c", "d"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("b", "c", "d"))
 }
 
 func TestSet_SubtractNoneInCommon_NoEffect(t *testing.T) {
@@ -403,11 +403,11 @@ func TestSet_SubtractNoneInCommon_NoEffect(t *testing.T) {
 
 	leftSubRight := l.Subtract(r)
 	assert.Equal(t, 3, leftSubRight.Count())
-	assert.True(t, leftSubRight.Is("a", "b", "c"))
+	assert.True(t, leftSubRight.Comprises("a", "b", "c"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("x", "y", "z"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("x", "y", "z"))
 }
 
 func TestSet_Subtract_Noncommutative(t *testing.T) {
@@ -423,13 +423,13 @@ func TestSet_Subtract_Noncommutative(t *testing.T) {
 
 	leftSubRight := l.Subtract(r)
 	assert.Equal(t, 1, leftSubRight.Count())
-	assert.True(t, leftSubRight.Is("a"))
+	assert.True(t, leftSubRight.Comprises("a"))
 
 	rightSubLeft := r.Subtract(l)
 	assert.Equal(t, 1, rightSubLeft.Count())
-	assert.True(t, rightSubLeft.Is("d"))
+	assert.True(t, rightSubLeft.Comprises("d"))
 
 	// Shouldn't mutate originals
-	assert.True(t, l.Is("a", "b", "c"))
-	assert.True(t, r.Is("b", "c", "d"))
+	assert.True(t, l.Comprises("a", "b", "c"))
+	assert.True(t, r.Comprises("b", "c", "d"))
 }

@@ -31,7 +31,7 @@ func (set Int16Set) Contains(x int16) bool {
 	return ok
 }
 
-func (set Int16Set) Is(vals ...int16) bool {
+func (set Int16Set) Comprises(vals ...int16) bool {
 	if set.Count() != len(vals) {
 		return false
 	}

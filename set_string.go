@@ -31,7 +31,7 @@ func (set StringSet) Contains(x string) bool {
 	return ok
 }
 
-func (set StringSet) Is(vals ...string) bool {
+func (set StringSet) Comprises(vals ...string) bool {
 	if set.Count() != len(vals) {
 		return false
 	}

@@ -31,7 +31,7 @@ func (set Int64Set) Contains(x int64) bool {
 	return ok
 }
 
-func (set Int64Set) Is(vals ...int64) bool {
+func (set Int64Set) Comprises(vals ...int64) bool {
 	if set.Count() != len(vals) {
 		return false
 	}

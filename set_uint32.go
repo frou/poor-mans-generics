@@ -31,7 +31,7 @@ func (set Uint32Set) Contains(x uint32) bool {
 	return ok
 }
 
-func (set Uint32Set) Is(vals ...uint32) bool {
+func (set Uint32Set) Comprises(vals ...uint32) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
