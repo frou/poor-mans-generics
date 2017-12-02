@@ -81,12 +81,15 @@ func (a Uints) Union(b Uints) Uints {
 
 func (a Uints) Intersection(b Uints) Uints {
 	result := NewUints()
-	for as, _ := range a {
-		for bs, _ := range b {
-			if as == bs {
-				result.Add(as)
-				break
-			}
+
+	smaller, larger := a, b
+	if a.Count() > b.Count() {
+		smaller, larger = b, a
+	}
+
+	for x, _ := range smaller {
+		if larger.Contains(x) {
+			result.Add(x)
 		}
 	}
 	return result
@@ -94,12 +97,15 @@ func (a Uints) Intersection(b Uints) Uints {
 
 func (a Uints) Difference(b Uints) Uints {
 	result := a.Union(b)
-	for as, _ := range a {
-		for bs, _ := range b {
-			if as == bs {
-				result.Remove(as)
-				break
-			}
+
+	smaller, larger := a, b
+	if a.Count() > b.Count() {
+		smaller, larger = b, a
+	}
+
+	for x, _ := range smaller {
+		if larger.Contains(x) {
+			result.Remove(x)
 		}
 	}
 	return result

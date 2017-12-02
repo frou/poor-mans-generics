@@ -81,12 +81,15 @@ func (a Int32s) Union(b Int32s) Int32s {
 
 func (a Int32s) Intersection(b Int32s) Int32s {
 	result := NewInt32s()
-	for as, _ := range a {
-		for bs, _ := range b {
-			if as == bs {
-				result.Add(as)
-				break
-			}
+
+	smaller, larger := a, b
+	if a.Count() > b.Count() {
+		smaller, larger = b, a
+	}
+
+	for x, _ := range smaller {
+		if larger.Contains(x) {
+			result.Add(x)
 		}
 	}
 	return result
@@ -94,12 +97,15 @@ func (a Int32s) Intersection(b Int32s) Int32s {
 
 func (a Int32s) Difference(b Int32s) Int32s {
 	result := a.Union(b)
-	for as, _ := range a {
-		for bs, _ := range b {
-			if as == bs {
-				result.Remove(as)
-				break
-			}
+
+	smaller, larger := a, b
+	if a.Count() > b.Count() {
+		smaller, larger = b, a
+	}
+
+	for x, _ := range smaller {
+		if larger.Contains(x) {
+			result.Remove(x)
 		}
 	}
 	return result

@@ -81,12 +81,15 @@ func (a Int8s) Union(b Int8s) Int8s {
 
 func (a Int8s) Intersection(b Int8s) Int8s {
 	result := NewInt8s()
-	for as, _ := range a {
-		for bs, _ := range b {
-			if as == bs {
-				result.Add(as)
-				break
-			}
+
+	smaller, larger := a, b
+	if a.Count() > b.Count() {
+		smaller, larger = b, a
+	}
+
+	for x, _ := range smaller {
+		if larger.Contains(x) {
+			result.Add(x)
 		}
 	}
 	return result
@@ -94,12 +97,15 @@ func (a Int8s) Intersection(b Int8s) Int8s {
 
 func (a Int8s) Difference(b Int8s) Int8s {
 	result := a.Union(b)
-	for as, _ := range a {
-		for bs, _ := range b {
-			if as == bs {
-				result.Remove(as)
-				break
-			}
+
+	smaller, larger := a, b
+	if a.Count() > b.Count() {
+		smaller, larger = b, a
+	}
+
+	for x, _ := range smaller {
+		if larger.Contains(x) {
+			result.Remove(x)
 		}
 	}
 	return result
