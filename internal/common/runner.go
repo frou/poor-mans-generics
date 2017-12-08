@@ -2,7 +2,6 @@ package common
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,39 +17,36 @@ type RunSpec struct {
 	TemplateVars map[string]string
 }
 
-func Run(spec RunSpec) {
+func Run(spec RunSpec) error {
 	if spec.CleanOnly {
-		cleanGeneratedFiles(spec.OutputPathFmt)
-		return
+		return cleanGeneratedFiles(spec.OutputPathFmt)
 	}
 
 	for k, v := range spec.TemplateVars {
 		if strings.TrimSpace(v) == "" {
-			log.Fatalf("Template var %q must not have an empty value", k)
+			return fmt.Errorf("Template var %q must not have an empty value", k)
 		}
 	}
 
 	tmpl, err := template.ParseFiles(spec.TemplatePath)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	fmtArg, ok := spec.TemplateVars[spec.OutputPathFmtArgKey]
 	if !ok {
-		log.Fatalf("OutputPathFmtArgKey %q is not in the TemplateVars map",
+		return fmt.Errorf("OutputPathFmtArgKey %q is not in the TemplateVars map",
 			spec.OutputPathFmtArgKey)
 	}
 
 	outFileName := fmt.Sprintf(spec.OutputPathFmt, fmtArg)
 	outFile, err := os.Create(outFileName)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer outFile.Close()
 
-	if err := tmpl.Execute(outFile, spec.TemplateVars); err != nil {
-		log.Fatal(err)
-	}
+	return tmpl.Execute(outFile, spec.TemplateVars)
 }
 
 func cleanGeneratedFiles(nameFmt string) error {
@@ -64,4 +60,12 @@ func cleanGeneratedFiles(nameFmt string) error {
 		}
 	}
 	return nil
+}
+
+func Exit(err error) {
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

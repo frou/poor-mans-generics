@@ -11,7 +11,7 @@ import (
 
 func main() {
 	flag.Parse()
-	common.Run(common.RunSpec{
+	common.Exit(common.Run(common.RunSpec{
 		CleanOnly:           *common.FlagClean,
 		TemplatePath:        *common.FlagTemplatePath,
 		OutputPathFmt:       "maths_%v.go",
@@ -20,5 +20,5 @@ func main() {
 			"ElementTypeName": strings.ToLower(*common.FlagElementTypeName),
 			"FuncNameSuffix":  strings.Title(*common.FlagElementTypeName),
 		},
-	})
+	}))
 }
