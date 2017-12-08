@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type Float32s map[float32]stdext.Unit
+type Float32s map[float32]struct{}
 
 func NewFloat32s(initialElements ...float32) Float32s {
 	set := make(Float32s)
@@ -19,7 +15,7 @@ func NewFloat32s(initialElements ...float32) Float32s {
 }
 
 func (set Float32s) Add(x float32) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set Float32s) Remove(x float32) {

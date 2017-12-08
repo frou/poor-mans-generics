@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type Complex64s map[complex64]stdext.Unit
+type Complex64s map[complex64]struct{}
 
 func NewComplex64s(initialElements ...complex64) Complex64s {
 	set := make(Complex64s)
@@ -19,7 +15,7 @@ func NewComplex64s(initialElements ...complex64) Complex64s {
 }
 
 func (set Complex64s) Add(x complex64) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set Complex64s) Remove(x complex64) {

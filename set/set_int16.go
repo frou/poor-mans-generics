@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type Int16s map[int16]stdext.Unit
+type Int16s map[int16]struct{}
 
 func NewInt16s(initialElements ...int16) Int16s {
 	set := make(Int16s)
@@ -19,7 +15,7 @@ func NewInt16s(initialElements ...int16) Int16s {
 }
 
 func (set Int16s) Add(x int16) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set Int16s) Remove(x int16) {

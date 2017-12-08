@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type Uint8s map[uint8]stdext.Unit
+type Uint8s map[uint8]struct{}
 
 func NewUint8s(initialElements ...uint8) Uint8s {
 	set := make(Uint8s)
@@ -19,7 +15,7 @@ func NewUint8s(initialElements ...uint8) Uint8s {
 }
 
 func (set Uint8s) Add(x uint8) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set Uint8s) Remove(x uint8) {

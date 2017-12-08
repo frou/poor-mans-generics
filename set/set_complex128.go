@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type Complex128s map[complex128]stdext.Unit
+type Complex128s map[complex128]struct{}
 
 func NewComplex128s(initialElements ...complex128) Complex128s {
 	set := make(Complex128s)
@@ -19,7 +15,7 @@ func NewComplex128s(initialElements ...complex128) Complex128s {
 }
 
 func (set Complex128s) Add(x complex128) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set Complex128s) Remove(x complex128) {

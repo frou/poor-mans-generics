@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type {{.SetTypeName}} map[{{.ElementTypeName}}]stdext.Unit
+type {{.SetTypeName}} map[{{.ElementTypeName}}]struct{}
 
 func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) {{.SetTypeName}} {
 	set := make({{.SetTypeName}})
@@ -19,7 +15,7 @@ func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) {{.SetTypeName
 }
 
 func (set {{.SetTypeName}}) Add(x {{.ElementTypeName}}) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set {{.SetTypeName}}) Remove(x {{.ElementTypeName}}) {

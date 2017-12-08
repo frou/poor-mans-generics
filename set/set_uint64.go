@@ -4,11 +4,7 @@ package set
 // !! This code was automatically generated. Do not hand edit.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import (
-	"github.com/frou/stdext"
-)
-
-type Uint64s map[uint64]stdext.Unit
+type Uint64s map[uint64]struct{}
 
 func NewUint64s(initialElements ...uint64) Uint64s {
 	set := make(Uint64s)
@@ -19,7 +15,7 @@ func NewUint64s(initialElements ...uint64) Uint64s {
 }
 
 func (set Uint64s) Add(x uint64) {
-	set[x] = stdext.Extant
+	set[x] = struct{}{}
 }
 
 func (set Uint64s) Remove(x uint64) {
