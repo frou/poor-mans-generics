@@ -14,11 +14,11 @@ func main() {
 	common.Run(common.RunSpec{
 		CleanOnly:           *common.FlagClean,
 		TemplatePath:        *common.FlagTemplatePath,
-		OutputPathFmt:       "set_%v.go",
+		OutputPathFmt:       "maths_%v.go",
 		OutputPathFmtArgKey: "ElementTypeName",
 		TemplateVars: map[string]string{
 			"ElementTypeName": strings.ToLower(*common.FlagElementTypeName),
-			"SetTypeName":     strings.Title(*common.FlagElementTypeName) + "s",
+			"FuncNameSuffix":  strings.Title(*common.FlagElementTypeName),
 		},
 	})
 }

@@ -1,12 +1,12 @@
 package set
 
-// This assumes a concrete type (set.Strings) has already been generated.
-
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+// `go generate` needs to have been run before tests can be run.
 
 func TestSet_NewSet_IsNotNil(t *testing.T) {
 	set := NewStrings()

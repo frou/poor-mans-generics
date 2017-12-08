@@ -1,0 +1,26 @@
+package maths
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// !! This code was automatically generated. Do not hand edit.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func Min{{.FuncNameSuffix}}(x, y {{.ElementTypeName}}) {{.ElementTypeName}} {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+func Max{{.FuncNameSuffix}}(x, y {{.ElementTypeName}}) {{.ElementTypeName}} {
+	if x > y {
+		return x
+	}
+	return y
+}
+
+func Abs{{.FuncNameSuffix}}(x {{.ElementTypeName}}) {{.ElementTypeName}} {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

@@ -7,15 +7,15 @@ package set
 //go:generate -command genset go run generator.go
 //go:generate genset -clean
 //go:generate genset -type int
+//go:generate genset -type int8
+//go:generate genset -type int16
+//go:generate genset -type int32
+//go:generate genset -type int64
 //go:generate genset -type uint
 //go:generate genset -type uint8
 //go:generate genset -type uint16
 //go:generate genset -type uint32
 //go:generate genset -type uint64
-//go:generate genset -type int8
-//go:generate genset -type int16
-//go:generate genset -type int32
-//go:generate genset -type int64
 //go:generate genset -type float32
 //go:generate genset -type float64
 //go:generate genset -type complex64
