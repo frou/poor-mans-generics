@@ -4,6 +4,6 @@ import "flag"
 
 var (
 	FlagClean           = flag.Bool("clean", false, "instead of generating, delete existing generated files")
-	FlagTemplatePath    = flag.String("template", "generator.tmpl", "path to template")
+	FlagTemplatePath    = flag.String("template", "generator.gotemplate", "path to template")
 	FlagElementTypeName = flag.String("type", "", "element type name")
 )
