@@ -2,10 +2,14 @@
 
 package set
 
-type Int32s map[int32]struct{}
+type Int32s struct {
+	backing map[int32]struct{}
+}
 
 func NewInt32s(initialElements ...int32) Int32s {
-	set := make(Int32s)
+	set := Int32s{
+		backing: make(map[int32]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewInt32s(initialElements ...int32) Int32s {
 }
 
 func (set Int32s) Add(x int32) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Int32s) Remove(x int32) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Int32s) Contains(x int32) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Int32s) Comprises(vals ...int32) bool {
 }
 
 func (set Int32s) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Int32s) Elements() []int32 {
 	elm := make([]int32, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Int32s) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Int32s) Clone() Int32s {
 	result := NewInt32s()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Int32s) Clone() Int32s {
 
 func (a Int32s) Union(b Int32s) Int32s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Int32s) Intersection(b Int32s) Int32s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Int32s) Difference(b Int32s) Int32s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Int32s) Difference(b Int32s) Int32s {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Int32s) Subtract(b Int32s) Int32s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

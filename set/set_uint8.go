@@ -2,10 +2,14 @@
 
 package set
 
-type Uint8s map[uint8]struct{}
+type Uint8s struct {
+	backing map[uint8]struct{}
+}
 
 func NewUint8s(initialElements ...uint8) Uint8s {
-	set := make(Uint8s)
+	set := Uint8s{
+		backing: make(map[uint8]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewUint8s(initialElements ...uint8) Uint8s {
 }
 
 func (set Uint8s) Add(x uint8) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Uint8s) Remove(x uint8) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Uint8s) Contains(x uint8) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Uint8s) Comprises(vals ...uint8) bool {
 }
 
 func (set Uint8s) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Uint8s) Elements() []uint8 {
 	elm := make([]uint8, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Uint8s) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Uint8s) Clone() Uint8s {
 	result := NewUint8s()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Uint8s) Clone() Uint8s {
 
 func (a Uint8s) Union(b Uint8s) Uint8s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Uint8s) Intersection(b Uint8s) Uint8s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Uint8s) Difference(b Uint8s) Uint8s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Uint8s) Difference(b Uint8s) Uint8s {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Uint8s) Subtract(b Uint8s) Uint8s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

@@ -2,10 +2,14 @@
 
 package set
 
-type Float32s map[float32]struct{}
+type Float32s struct {
+	backing map[float32]struct{}
+}
 
 func NewFloat32s(initialElements ...float32) Float32s {
-	set := make(Float32s)
+	set := Float32s{
+		backing: make(map[float32]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewFloat32s(initialElements ...float32) Float32s {
 }
 
 func (set Float32s) Add(x float32) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Float32s) Remove(x float32) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Float32s) Contains(x float32) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Float32s) Comprises(vals ...float32) bool {
 }
 
 func (set Float32s) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Float32s) Elements() []float32 {
 	elm := make([]float32, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Float32s) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Float32s) Clone() Float32s {
 	result := NewFloat32s()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Float32s) Clone() Float32s {
 
 func (a Float32s) Union(b Float32s) Float32s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Float32s) Intersection(b Float32s) Float32s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Float32s) Difference(b Float32s) Float32s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Float32s) Difference(b Float32s) Float32s {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Float32s) Subtract(b Float32s) Float32s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

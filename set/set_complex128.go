@@ -2,10 +2,14 @@
 
 package set
 
-type Complex128s map[complex128]struct{}
+type Complex128s struct {
+	backing map[complex128]struct{}
+}
 
 func NewComplex128s(initialElements ...complex128) Complex128s {
-	set := make(Complex128s)
+	set := Complex128s{
+		backing: make(map[complex128]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewComplex128s(initialElements ...complex128) Complex128s {
 }
 
 func (set Complex128s) Add(x complex128) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Complex128s) Remove(x complex128) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Complex128s) Contains(x complex128) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Complex128s) Comprises(vals ...complex128) bool {
 }
 
 func (set Complex128s) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Complex128s) Elements() []complex128 {
 	elm := make([]complex128, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Complex128s) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Complex128s) Clone() Complex128s {
 	result := NewComplex128s()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Complex128s) Clone() Complex128s {
 
 func (a Complex128s) Union(b Complex128s) Complex128s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Complex128s) Intersection(b Complex128s) Complex128s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Complex128s) Difference(b Complex128s) Complex128s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Complex128s) Difference(b Complex128s) Complex128s {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Complex128s) Subtract(b Complex128s) Complex128s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

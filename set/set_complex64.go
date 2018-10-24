@@ -2,10 +2,14 @@
 
 package set
 
-type Complex64s map[complex64]struct{}
+type Complex64s struct {
+	backing map[complex64]struct{}
+}
 
 func NewComplex64s(initialElements ...complex64) Complex64s {
-	set := make(Complex64s)
+	set := Complex64s{
+		backing: make(map[complex64]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewComplex64s(initialElements ...complex64) Complex64s {
 }
 
 func (set Complex64s) Add(x complex64) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Complex64s) Remove(x complex64) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Complex64s) Contains(x complex64) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Complex64s) Comprises(vals ...complex64) bool {
 }
 
 func (set Complex64s) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Complex64s) Elements() []complex64 {
 	elm := make([]complex64, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Complex64s) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Complex64s) Clone() Complex64s {
 	result := NewComplex64s()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Complex64s) Clone() Complex64s {
 
 func (a Complex64s) Union(b Complex64s) Complex64s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Complex64s) Intersection(b Complex64s) Complex64s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Complex64s) Difference(b Complex64s) Complex64s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Complex64s) Difference(b Complex64s) Complex64s {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Complex64s) Subtract(b Complex64s) Complex64s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

@@ -2,10 +2,14 @@
 
 package set
 
-type Uints map[uint]struct{}
+type Uints struct {
+	backing map[uint]struct{}
+}
 
 func NewUints(initialElements ...uint) Uints {
-	set := make(Uints)
+	set := Uints{
+		backing: make(map[uint]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewUints(initialElements ...uint) Uints {
 }
 
 func (set Uints) Add(x uint) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Uints) Remove(x uint) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Uints) Contains(x uint) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Uints) Comprises(vals ...uint) bool {
 }
 
 func (set Uints) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Uints) Elements() []uint {
 	elm := make([]uint, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Uints) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Uints) Clone() Uints {
 	result := NewUints()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Uints) Clone() Uints {
 
 func (a Uints) Union(b Uints) Uints {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Uints) Intersection(b Uints) Uints {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Uints) Difference(b Uints) Uints {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Uints) Difference(b Uints) Uints {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Uints) Subtract(b Uints) Uints {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

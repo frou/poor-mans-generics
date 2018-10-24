@@ -2,10 +2,14 @@
 
 package set
 
-type Uint16s map[uint16]struct{}
+type Uint16s struct {
+	backing map[uint16]struct{}
+}
 
 func NewUint16s(initialElements ...uint16) Uint16s {
-	set := make(Uint16s)
+	set := Uint16s{
+		backing: make(map[uint16]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -13,15 +17,15 @@ func NewUint16s(initialElements ...uint16) Uint16s {
 }
 
 func (set Uint16s) Add(x uint16) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set Uint16s) Remove(x uint16) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set Uint16s) Contains(x uint16) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -38,26 +42,26 @@ func (set Uint16s) Comprises(vals ...uint16) bool {
 }
 
 func (set Uint16s) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set Uint16s) Elements() []uint16 {
 	elm := make([]uint16, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set Uint16s) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set Uint16s) Clone() Uint16s {
 	result := NewUint16s()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -67,7 +71,7 @@ func (set Uint16s) Clone() Uint16s {
 
 func (a Uint16s) Union(b Uint16s) Uint16s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -81,7 +85,7 @@ func (a Uint16s) Intersection(b Uint16s) Uint16s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -97,7 +101,7 @@ func (a Uint16s) Difference(b Uint16s) Uint16s {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -108,7 +112,7 @@ func (a Uint16s) Difference(b Uint16s) Uint16s {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a Uint16s) Subtract(b Uint16s) Uint16s {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result

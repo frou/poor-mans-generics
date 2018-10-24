@@ -1,9 +1,13 @@
 package set
 
-type {{.SetTypeName}} map[{{.ElementTypeName}}]struct{}
+type {{.SetTypeName}} struct {
+	backing map[{{.ElementTypeName}}]struct{}
+}
 
 func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) {{.SetTypeName}} {
-	set := make({{.SetTypeName}})
+	set := {{.SetTypeName}}{
+		backing: make(map[{{.ElementTypeName}}]struct{}),
+	}
 	for _, x := range initialElements {
 		set.Add(x)
 	}
@@ -11,15 +15,15 @@ func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) {{.SetTypeName
 }
 
 func (set {{.SetTypeName}}) Add(x {{.ElementTypeName}}) {
-	set[x] = struct{}{}
+	set.backing[x] = struct{}{}
 }
 
 func (set {{.SetTypeName}}) Remove(x {{.ElementTypeName}}) {
-	delete(set, x)
+	delete(set.backing, x)
 }
 
 func (set {{.SetTypeName}}) Contains(x {{.ElementTypeName}}) bool {
-	_, ok := set[x]
+	_, ok := set.backing[x]
 	return ok
 }
 
@@ -36,26 +40,26 @@ func (set {{.SetTypeName}}) Comprises(vals ...{{.ElementTypeName}}) bool {
 }
 
 func (set {{.SetTypeName}}) Count() int {
-	return len(set)
+	return len(set.backing)
 }
 
 func (set {{.SetTypeName}}) Elements() []{{.ElementTypeName}} {
 	elm := make([]{{.ElementTypeName}}, 0, set.Count())
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		elm = append(elm, x)
 	}
 	return elm
 }
 
 func (set {{.SetTypeName}}) Clear() {
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
 func (set {{.SetTypeName}}) Clone() {{.SetTypeName}} {
 	result := New{{.SetTypeName}}()
-	for x, _ := range set {
+	for x, _ := range set.backing {
 		result.Add(x)
 	}
 	return result
@@ -65,7 +69,7 @@ func (set {{.SetTypeName}}) Clone() {{.SetTypeName}} {
 
 func (a {{.SetTypeName}}) Union(b {{.SetTypeName}}) {{.SetTypeName}} {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Add(x)
 	}
 	return result
@@ -79,7 +83,7 @@ func (a {{.SetTypeName}}) Intersection(b {{.SetTypeName}}) {{.SetTypeName}} {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Add(x)
 		}
@@ -95,7 +99,7 @@ func (a {{.SetTypeName}}) Difference(b {{.SetTypeName}}) {{.SetTypeName}} {
 		smaller, larger = b, a
 	}
 
-	for x, _ := range smaller {
+	for x, _ := range smaller.backing {
 		if larger.Contains(x) {
 			result.Remove(x)
 		}
@@ -106,7 +110,7 @@ func (a {{.SetTypeName}}) Difference(b {{.SetTypeName}}) {{.SetTypeName}} {
 // Subtraction is non-commutative: a-b is different to b-a.
 func (a {{.SetTypeName}}) Subtract(b {{.SetTypeName}}) {{.SetTypeName}} {
 	result := a.Clone()
-	for x, _ := range b {
+	for x, _ := range b.backing {
 		result.Remove(x)
 	}
 	return result
