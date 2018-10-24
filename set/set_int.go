@@ -6,30 +6,31 @@ type Ints struct {
 	backing map[int]struct{}
 }
 
-func NewInts(initialElements ...int) Ints {
-	set := Ints{
-		backing: make(map[int]struct{}),
-	}
+func NewInts(initialElements ...int) *Ints {
+	set := new(Ints)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Ints) Add(x int) {
+func (set *Ints) Add(x int) {
+	if set.backing == nil {
+		set.backing = make(map[int]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Ints) Remove(x int) {
+func (set *Ints) Remove(x int) {
 	delete(set.backing, x)
 }
 
-func (set Ints) Contains(x int) bool {
+func (set *Ints) Contains(x int) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Ints) Comprises(vals ...int) bool {
+func (set *Ints) Comprises(vals ...int) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Ints) Comprises(vals ...int) bool {
 	return true
 }
 
-func (set Ints) Count() int {
+func (set *Ints) Count() int {
 	return len(set.backing)
 }
 
-func (set Ints) Elements() []int {
+func (set *Ints) Elements() []int {
 	elm := make([]int, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Ints) Elements() []int {
 	return elm
 }
 
-func (set Ints) Clear() {
+func (set *Ints) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Ints) Clone() Ints {
+func (set *Ints) Clone() *Ints {
 	result := NewInts()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Ints) Clone() Ints {
 
 // ------------------------------------------------------------
 
-func (a Ints) Union(b Ints) Ints {
+func (a *Ints) Union(b *Ints) *Ints {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Ints) Union(b Ints) Ints {
 	return result
 }
 
-func (a Ints) Intersection(b Ints) Ints {
+func (a *Ints) Intersection(b *Ints) *Ints {
 	result := NewInts()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Ints) Intersection(b Ints) Ints {
 	return result
 }
 
-func (a Ints) Difference(b Ints) Ints {
+func (a *Ints) Difference(b *Ints) *Ints {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Ints) Difference(b Ints) Ints {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Ints) Subtract(b Ints) Ints {
+func (a *Ints) Subtract(b *Ints) *Ints {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

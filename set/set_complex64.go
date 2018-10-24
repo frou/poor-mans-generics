@@ -6,30 +6,31 @@ type Complex64s struct {
 	backing map[complex64]struct{}
 }
 
-func NewComplex64s(initialElements ...complex64) Complex64s {
-	set := Complex64s{
-		backing: make(map[complex64]struct{}),
-	}
+func NewComplex64s(initialElements ...complex64) *Complex64s {
+	set := new(Complex64s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Complex64s) Add(x complex64) {
+func (set *Complex64s) Add(x complex64) {
+	if set.backing == nil {
+		set.backing = make(map[complex64]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Complex64s) Remove(x complex64) {
+func (set *Complex64s) Remove(x complex64) {
 	delete(set.backing, x)
 }
 
-func (set Complex64s) Contains(x complex64) bool {
+func (set *Complex64s) Contains(x complex64) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Complex64s) Comprises(vals ...complex64) bool {
+func (set *Complex64s) Comprises(vals ...complex64) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Complex64s) Comprises(vals ...complex64) bool {
 	return true
 }
 
-func (set Complex64s) Count() int {
+func (set *Complex64s) Count() int {
 	return len(set.backing)
 }
 
-func (set Complex64s) Elements() []complex64 {
+func (set *Complex64s) Elements() []complex64 {
 	elm := make([]complex64, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Complex64s) Elements() []complex64 {
 	return elm
 }
 
-func (set Complex64s) Clear() {
+func (set *Complex64s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Complex64s) Clone() Complex64s {
+func (set *Complex64s) Clone() *Complex64s {
 	result := NewComplex64s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Complex64s) Clone() Complex64s {
 
 // ------------------------------------------------------------
 
-func (a Complex64s) Union(b Complex64s) Complex64s {
+func (a *Complex64s) Union(b *Complex64s) *Complex64s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Complex64s) Union(b Complex64s) Complex64s {
 	return result
 }
 
-func (a Complex64s) Intersection(b Complex64s) Complex64s {
+func (a *Complex64s) Intersection(b *Complex64s) *Complex64s {
 	result := NewComplex64s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Complex64s) Intersection(b Complex64s) Complex64s {
 	return result
 }
 
-func (a Complex64s) Difference(b Complex64s) Complex64s {
+func (a *Complex64s) Difference(b *Complex64s) *Complex64s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Complex64s) Difference(b Complex64s) Complex64s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Complex64s) Subtract(b Complex64s) Complex64s {
+func (a *Complex64s) Subtract(b *Complex64s) *Complex64s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

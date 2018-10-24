@@ -1,7 +1,11 @@
 // Package set contains generated set types and their associated methods. A set
 // type is currently generated for each of Go's built-in numeric types as well
-// as its built-in string type. To regenerate, run `go generate` on this
-// package.
+// as its built-in string type.
+//
+// Like Go's map type, these set types should not be written to (i.e. the
+// Add/Remove/Clear methods) if there are concurrent readers/writers.
+//
+// To regenerate, run `go generate` on this package.
 package set
 
 //go:generate -command genset go run generator.go

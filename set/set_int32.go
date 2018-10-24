@@ -6,30 +6,31 @@ type Int32s struct {
 	backing map[int32]struct{}
 }
 
-func NewInt32s(initialElements ...int32) Int32s {
-	set := Int32s{
-		backing: make(map[int32]struct{}),
-	}
+func NewInt32s(initialElements ...int32) *Int32s {
+	set := new(Int32s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Int32s) Add(x int32) {
+func (set *Int32s) Add(x int32) {
+	if set.backing == nil {
+		set.backing = make(map[int32]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Int32s) Remove(x int32) {
+func (set *Int32s) Remove(x int32) {
 	delete(set.backing, x)
 }
 
-func (set Int32s) Contains(x int32) bool {
+func (set *Int32s) Contains(x int32) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Int32s) Comprises(vals ...int32) bool {
+func (set *Int32s) Comprises(vals ...int32) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Int32s) Comprises(vals ...int32) bool {
 	return true
 }
 
-func (set Int32s) Count() int {
+func (set *Int32s) Count() int {
 	return len(set.backing)
 }
 
-func (set Int32s) Elements() []int32 {
+func (set *Int32s) Elements() []int32 {
 	elm := make([]int32, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Int32s) Elements() []int32 {
 	return elm
 }
 
-func (set Int32s) Clear() {
+func (set *Int32s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Int32s) Clone() Int32s {
+func (set *Int32s) Clone() *Int32s {
 	result := NewInt32s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Int32s) Clone() Int32s {
 
 // ------------------------------------------------------------
 
-func (a Int32s) Union(b Int32s) Int32s {
+func (a *Int32s) Union(b *Int32s) *Int32s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Int32s) Union(b Int32s) Int32s {
 	return result
 }
 
-func (a Int32s) Intersection(b Int32s) Int32s {
+func (a *Int32s) Intersection(b *Int32s) *Int32s {
 	result := NewInt32s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Int32s) Intersection(b Int32s) Int32s {
 	return result
 }
 
-func (a Int32s) Difference(b Int32s) Int32s {
+func (a *Int32s) Difference(b *Int32s) *Int32s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Int32s) Difference(b Int32s) Int32s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Int32s) Subtract(b Int32s) Int32s {
+func (a *Int32s) Subtract(b *Int32s) *Int32s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

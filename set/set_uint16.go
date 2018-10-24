@@ -6,30 +6,31 @@ type Uint16s struct {
 	backing map[uint16]struct{}
 }
 
-func NewUint16s(initialElements ...uint16) Uint16s {
-	set := Uint16s{
-		backing: make(map[uint16]struct{}),
-	}
+func NewUint16s(initialElements ...uint16) *Uint16s {
+	set := new(Uint16s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Uint16s) Add(x uint16) {
+func (set *Uint16s) Add(x uint16) {
+	if set.backing == nil {
+		set.backing = make(map[uint16]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Uint16s) Remove(x uint16) {
+func (set *Uint16s) Remove(x uint16) {
 	delete(set.backing, x)
 }
 
-func (set Uint16s) Contains(x uint16) bool {
+func (set *Uint16s) Contains(x uint16) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Uint16s) Comprises(vals ...uint16) bool {
+func (set *Uint16s) Comprises(vals ...uint16) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Uint16s) Comprises(vals ...uint16) bool {
 	return true
 }
 
-func (set Uint16s) Count() int {
+func (set *Uint16s) Count() int {
 	return len(set.backing)
 }
 
-func (set Uint16s) Elements() []uint16 {
+func (set *Uint16s) Elements() []uint16 {
 	elm := make([]uint16, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Uint16s) Elements() []uint16 {
 	return elm
 }
 
-func (set Uint16s) Clear() {
+func (set *Uint16s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Uint16s) Clone() Uint16s {
+func (set *Uint16s) Clone() *Uint16s {
 	result := NewUint16s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Uint16s) Clone() Uint16s {
 
 // ------------------------------------------------------------
 
-func (a Uint16s) Union(b Uint16s) Uint16s {
+func (a *Uint16s) Union(b *Uint16s) *Uint16s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Uint16s) Union(b Uint16s) Uint16s {
 	return result
 }
 
-func (a Uint16s) Intersection(b Uint16s) Uint16s {
+func (a *Uint16s) Intersection(b *Uint16s) *Uint16s {
 	result := NewUint16s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Uint16s) Intersection(b Uint16s) Uint16s {
 	return result
 }
 
-func (a Uint16s) Difference(b Uint16s) Uint16s {
+func (a *Uint16s) Difference(b *Uint16s) *Uint16s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Uint16s) Difference(b Uint16s) Uint16s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Uint16s) Subtract(b Uint16s) Uint16s {
+func (a *Uint16s) Subtract(b *Uint16s) *Uint16s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

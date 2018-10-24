@@ -6,30 +6,31 @@ type Uints struct {
 	backing map[uint]struct{}
 }
 
-func NewUints(initialElements ...uint) Uints {
-	set := Uints{
-		backing: make(map[uint]struct{}),
-	}
+func NewUints(initialElements ...uint) *Uints {
+	set := new(Uints)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Uints) Add(x uint) {
+func (set *Uints) Add(x uint) {
+	if set.backing == nil {
+		set.backing = make(map[uint]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Uints) Remove(x uint) {
+func (set *Uints) Remove(x uint) {
 	delete(set.backing, x)
 }
 
-func (set Uints) Contains(x uint) bool {
+func (set *Uints) Contains(x uint) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Uints) Comprises(vals ...uint) bool {
+func (set *Uints) Comprises(vals ...uint) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Uints) Comprises(vals ...uint) bool {
 	return true
 }
 
-func (set Uints) Count() int {
+func (set *Uints) Count() int {
 	return len(set.backing)
 }
 
-func (set Uints) Elements() []uint {
+func (set *Uints) Elements() []uint {
 	elm := make([]uint, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Uints) Elements() []uint {
 	return elm
 }
 
-func (set Uints) Clear() {
+func (set *Uints) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Uints) Clone() Uints {
+func (set *Uints) Clone() *Uints {
 	result := NewUints()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Uints) Clone() Uints {
 
 // ------------------------------------------------------------
 
-func (a Uints) Union(b Uints) Uints {
+func (a *Uints) Union(b *Uints) *Uints {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Uints) Union(b Uints) Uints {
 	return result
 }
 
-func (a Uints) Intersection(b Uints) Uints {
+func (a *Uints) Intersection(b *Uints) *Uints {
 	result := NewUints()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Uints) Intersection(b Uints) Uints {
 	return result
 }
 
-func (a Uints) Difference(b Uints) Uints {
+func (a *Uints) Difference(b *Uints) *Uints {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Uints) Difference(b Uints) Uints {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Uints) Subtract(b Uints) Uints {
+func (a *Uints) Subtract(b *Uints) *Uints {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

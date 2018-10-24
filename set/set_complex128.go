@@ -6,30 +6,31 @@ type Complex128s struct {
 	backing map[complex128]struct{}
 }
 
-func NewComplex128s(initialElements ...complex128) Complex128s {
-	set := Complex128s{
-		backing: make(map[complex128]struct{}),
-	}
+func NewComplex128s(initialElements ...complex128) *Complex128s {
+	set := new(Complex128s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Complex128s) Add(x complex128) {
+func (set *Complex128s) Add(x complex128) {
+	if set.backing == nil {
+		set.backing = make(map[complex128]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Complex128s) Remove(x complex128) {
+func (set *Complex128s) Remove(x complex128) {
 	delete(set.backing, x)
 }
 
-func (set Complex128s) Contains(x complex128) bool {
+func (set *Complex128s) Contains(x complex128) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Complex128s) Comprises(vals ...complex128) bool {
+func (set *Complex128s) Comprises(vals ...complex128) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Complex128s) Comprises(vals ...complex128) bool {
 	return true
 }
 
-func (set Complex128s) Count() int {
+func (set *Complex128s) Count() int {
 	return len(set.backing)
 }
 
-func (set Complex128s) Elements() []complex128 {
+func (set *Complex128s) Elements() []complex128 {
 	elm := make([]complex128, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Complex128s) Elements() []complex128 {
 	return elm
 }
 
-func (set Complex128s) Clear() {
+func (set *Complex128s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Complex128s) Clone() Complex128s {
+func (set *Complex128s) Clone() *Complex128s {
 	result := NewComplex128s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Complex128s) Clone() Complex128s {
 
 // ------------------------------------------------------------
 
-func (a Complex128s) Union(b Complex128s) Complex128s {
+func (a *Complex128s) Union(b *Complex128s) *Complex128s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Complex128s) Union(b Complex128s) Complex128s {
 	return result
 }
 
-func (a Complex128s) Intersection(b Complex128s) Complex128s {
+func (a *Complex128s) Intersection(b *Complex128s) *Complex128s {
 	result := NewComplex128s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Complex128s) Intersection(b Complex128s) Complex128s {
 	return result
 }
 
-func (a Complex128s) Difference(b Complex128s) Complex128s {
+func (a *Complex128s) Difference(b *Complex128s) *Complex128s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Complex128s) Difference(b Complex128s) Complex128s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Complex128s) Subtract(b Complex128s) Complex128s {
+func (a *Complex128s) Subtract(b *Complex128s) *Complex128s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

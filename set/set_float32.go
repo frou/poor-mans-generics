@@ -6,30 +6,31 @@ type Float32s struct {
 	backing map[float32]struct{}
 }
 
-func NewFloat32s(initialElements ...float32) Float32s {
-	set := Float32s{
-		backing: make(map[float32]struct{}),
-	}
+func NewFloat32s(initialElements ...float32) *Float32s {
+	set := new(Float32s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Float32s) Add(x float32) {
+func (set *Float32s) Add(x float32) {
+	if set.backing == nil {
+		set.backing = make(map[float32]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Float32s) Remove(x float32) {
+func (set *Float32s) Remove(x float32) {
 	delete(set.backing, x)
 }
 
-func (set Float32s) Contains(x float32) bool {
+func (set *Float32s) Contains(x float32) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Float32s) Comprises(vals ...float32) bool {
+func (set *Float32s) Comprises(vals ...float32) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Float32s) Comprises(vals ...float32) bool {
 	return true
 }
 
-func (set Float32s) Count() int {
+func (set *Float32s) Count() int {
 	return len(set.backing)
 }
 
-func (set Float32s) Elements() []float32 {
+func (set *Float32s) Elements() []float32 {
 	elm := make([]float32, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Float32s) Elements() []float32 {
 	return elm
 }
 
-func (set Float32s) Clear() {
+func (set *Float32s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Float32s) Clone() Float32s {
+func (set *Float32s) Clone() *Float32s {
 	result := NewFloat32s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Float32s) Clone() Float32s {
 
 // ------------------------------------------------------------
 
-func (a Float32s) Union(b Float32s) Float32s {
+func (a *Float32s) Union(b *Float32s) *Float32s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Float32s) Union(b Float32s) Float32s {
 	return result
 }
 
-func (a Float32s) Intersection(b Float32s) Float32s {
+func (a *Float32s) Intersection(b *Float32s) *Float32s {
 	result := NewFloat32s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Float32s) Intersection(b Float32s) Float32s {
 	return result
 }
 
-func (a Float32s) Difference(b Float32s) Float32s {
+func (a *Float32s) Difference(b *Float32s) *Float32s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Float32s) Difference(b Float32s) Float32s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Float32s) Subtract(b Float32s) Float32s {
+func (a *Float32s) Subtract(b *Float32s) *Float32s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

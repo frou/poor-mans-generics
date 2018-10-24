@@ -6,30 +6,31 @@ type Int8s struct {
 	backing map[int8]struct{}
 }
 
-func NewInt8s(initialElements ...int8) Int8s {
-	set := Int8s{
-		backing: make(map[int8]struct{}),
-	}
+func NewInt8s(initialElements ...int8) *Int8s {
+	set := new(Int8s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Int8s) Add(x int8) {
+func (set *Int8s) Add(x int8) {
+	if set.backing == nil {
+		set.backing = make(map[int8]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Int8s) Remove(x int8) {
+func (set *Int8s) Remove(x int8) {
 	delete(set.backing, x)
 }
 
-func (set Int8s) Contains(x int8) bool {
+func (set *Int8s) Contains(x int8) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Int8s) Comprises(vals ...int8) bool {
+func (set *Int8s) Comprises(vals ...int8) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Int8s) Comprises(vals ...int8) bool {
 	return true
 }
 
-func (set Int8s) Count() int {
+func (set *Int8s) Count() int {
 	return len(set.backing)
 }
 
-func (set Int8s) Elements() []int8 {
+func (set *Int8s) Elements() []int8 {
 	elm := make([]int8, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Int8s) Elements() []int8 {
 	return elm
 }
 
-func (set Int8s) Clear() {
+func (set *Int8s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Int8s) Clone() Int8s {
+func (set *Int8s) Clone() *Int8s {
 	result := NewInt8s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Int8s) Clone() Int8s {
 
 // ------------------------------------------------------------
 
-func (a Int8s) Union(b Int8s) Int8s {
+func (a *Int8s) Union(b *Int8s) *Int8s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Int8s) Union(b Int8s) Int8s {
 	return result
 }
 
-func (a Int8s) Intersection(b Int8s) Int8s {
+func (a *Int8s) Intersection(b *Int8s) *Int8s {
 	result := NewInt8s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Int8s) Intersection(b Int8s) Int8s {
 	return result
 }
 
-func (a Int8s) Difference(b Int8s) Int8s {
+func (a *Int8s) Difference(b *Int8s) *Int8s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Int8s) Difference(b Int8s) Int8s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Int8s) Subtract(b Int8s) Int8s {
+func (a *Int8s) Subtract(b *Int8s) *Int8s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

@@ -6,30 +6,31 @@ type Int64s struct {
 	backing map[int64]struct{}
 }
 
-func NewInt64s(initialElements ...int64) Int64s {
-	set := Int64s{
-		backing: make(map[int64]struct{}),
-	}
+func NewInt64s(initialElements ...int64) *Int64s {
+	set := new(Int64s)
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set Int64s) Add(x int64) {
+func (set *Int64s) Add(x int64) {
+	if set.backing == nil {
+		set.backing = make(map[int64]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set Int64s) Remove(x int64) {
+func (set *Int64s) Remove(x int64) {
 	delete(set.backing, x)
 }
 
-func (set Int64s) Contains(x int64) bool {
+func (set *Int64s) Contains(x int64) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set Int64s) Comprises(vals ...int64) bool {
+func (set *Int64s) Comprises(vals ...int64) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -41,11 +42,11 @@ func (set Int64s) Comprises(vals ...int64) bool {
 	return true
 }
 
-func (set Int64s) Count() int {
+func (set *Int64s) Count() int {
 	return len(set.backing)
 }
 
-func (set Int64s) Elements() []int64 {
+func (set *Int64s) Elements() []int64 {
 	elm := make([]int64, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -53,13 +54,13 @@ func (set Int64s) Elements() []int64 {
 	return elm
 }
 
-func (set Int64s) Clear() {
+func (set *Int64s) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set Int64s) Clone() Int64s {
+func (set *Int64s) Clone() *Int64s {
 	result := NewInt64s()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -69,7 +70,7 @@ func (set Int64s) Clone() Int64s {
 
 // ------------------------------------------------------------
 
-func (a Int64s) Union(b Int64s) Int64s {
+func (a *Int64s) Union(b *Int64s) *Int64s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -77,7 +78,7 @@ func (a Int64s) Union(b Int64s) Int64s {
 	return result
 }
 
-func (a Int64s) Intersection(b Int64s) Int64s {
+func (a *Int64s) Intersection(b *Int64s) *Int64s {
 	result := NewInt64s()
 
 	smaller, larger := a, b
@@ -93,7 +94,7 @@ func (a Int64s) Intersection(b Int64s) Int64s {
 	return result
 }
 
-func (a Int64s) Difference(b Int64s) Int64s {
+func (a *Int64s) Difference(b *Int64s) *Int64s {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -110,7 +111,7 @@ func (a Int64s) Difference(b Int64s) Int64s {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a Int64s) Subtract(b Int64s) Int64s {
+func (a *Int64s) Subtract(b *Int64s) *Int64s {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

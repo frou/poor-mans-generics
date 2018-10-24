@@ -4,30 +4,31 @@ type {{.SetTypeName}} struct {
 	backing map[{{.ElementTypeName}}]struct{}
 }
 
-func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) {{.SetTypeName}} {
-	set := {{.SetTypeName}}{
-		backing: make(map[{{.ElementTypeName}}]struct{}),
-	}
+func New{{.SetTypeName}}(initialElements ...{{.ElementTypeName}}) *{{.SetTypeName}} {
+	set := new({{.SetTypeName}})
 	for _, x := range initialElements {
 		set.Add(x)
 	}
 	return set
 }
 
-func (set {{.SetTypeName}}) Add(x {{.ElementTypeName}}) {
+func (set *{{.SetTypeName}}) Add(x {{.ElementTypeName}}) {
+	if set.backing == nil {
+		set.backing = make(map[{{.ElementTypeName}}]struct{})
+	}
 	set.backing[x] = struct{}{}
 }
 
-func (set {{.SetTypeName}}) Remove(x {{.ElementTypeName}}) {
+func (set *{{.SetTypeName}}) Remove(x {{.ElementTypeName}}) {
 	delete(set.backing, x)
 }
 
-func (set {{.SetTypeName}}) Contains(x {{.ElementTypeName}}) bool {
+func (set *{{.SetTypeName}}) Contains(x {{.ElementTypeName}}) bool {
 	_, ok := set.backing[x]
 	return ok
 }
 
-func (set {{.SetTypeName}}) Comprises(vals ...{{.ElementTypeName}}) bool {
+func (set *{{.SetTypeName}}) Comprises(vals ...{{.ElementTypeName}}) bool {
 	if set.Count() != len(vals) {
 		return false
 	}
@@ -39,11 +40,11 @@ func (set {{.SetTypeName}}) Comprises(vals ...{{.ElementTypeName}}) bool {
 	return true
 }
 
-func (set {{.SetTypeName}}) Count() int {
+func (set *{{.SetTypeName}}) Count() int {
 	return len(set.backing)
 }
 
-func (set {{.SetTypeName}}) Elements() []{{.ElementTypeName}} {
+func (set *{{.SetTypeName}}) Elements() []{{.ElementTypeName}} {
 	elm := make([]{{.ElementTypeName}}, 0, set.Count())
 	for x, _ := range set.backing {
 		elm = append(elm, x)
@@ -51,13 +52,13 @@ func (set {{.SetTypeName}}) Elements() []{{.ElementTypeName}} {
 	return elm
 }
 
-func (set {{.SetTypeName}}) Clear() {
+func (set *{{.SetTypeName}}) Clear() {
 	for x, _ := range set.backing {
 		set.Remove(x)
 	}
 }
 
-func (set {{.SetTypeName}}) Clone() {{.SetTypeName}} {
+func (set *{{.SetTypeName}}) Clone() *{{.SetTypeName}} {
 	result := New{{.SetTypeName}}()
 	for x, _ := range set.backing {
 		result.Add(x)
@@ -67,7 +68,7 @@ func (set {{.SetTypeName}}) Clone() {{.SetTypeName}} {
 
 // ------------------------------------------------------------
 
-func (a {{.SetTypeName}}) Union(b {{.SetTypeName}}) {{.SetTypeName}} {
+func (a *{{.SetTypeName}}) Union(b *{{.SetTypeName}}) *{{.SetTypeName}} {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Add(x)
@@ -75,7 +76,7 @@ func (a {{.SetTypeName}}) Union(b {{.SetTypeName}}) {{.SetTypeName}} {
 	return result
 }
 
-func (a {{.SetTypeName}}) Intersection(b {{.SetTypeName}}) {{.SetTypeName}} {
+func (a *{{.SetTypeName}}) Intersection(b *{{.SetTypeName}}) *{{.SetTypeName}} {
 	result := New{{.SetTypeName}}()
 
 	smaller, larger := a, b
@@ -91,7 +92,7 @@ func (a {{.SetTypeName}}) Intersection(b {{.SetTypeName}}) {{.SetTypeName}} {
 	return result
 }
 
-func (a {{.SetTypeName}}) Difference(b {{.SetTypeName}}) {{.SetTypeName}} {
+func (a *{{.SetTypeName}}) Difference(b *{{.SetTypeName}}) *{{.SetTypeName}} {
 	result := a.Union(b)
 
 	smaller, larger := a, b
@@ -108,7 +109,7 @@ func (a {{.SetTypeName}}) Difference(b {{.SetTypeName}}) {{.SetTypeName}} {
 }
 
 // Subtraction is non-commutative: a-b is different to b-a.
-func (a {{.SetTypeName}}) Subtract(b {{.SetTypeName}}) {{.SetTypeName}} {
+func (a *{{.SetTypeName}}) Subtract(b *{{.SetTypeName}}) *{{.SetTypeName}} {
 	result := a.Clone()
 	for x, _ := range b.backing {
 		result.Remove(x)

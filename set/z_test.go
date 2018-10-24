@@ -14,6 +14,15 @@ func TestSet_NewSet_IsNotNil(t *testing.T) {
 	assert.NotNil(t, set)
 }
 
+func TestSet_ZeroValue_Works(t *testing.T) {
+	var zet Strings
+
+	zet.Add("a")
+
+	assert.Equal(t, 1, zet.Count())
+	assert.True(t, zet.Comprises("a"))
+}
+
 func TestSet_NewSetWithElements_IsPopulated(t *testing.T) {
 	set := NewStrings("a", "b")
 
